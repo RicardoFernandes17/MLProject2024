@@ -8,7 +8,7 @@ class TestDataLoader(unittest.TestCase):
         self.data_path = Path('data/raw')
         self.data_loader = DataLoader(
             self.data_path / 'jaguar_movement_data.csv',
-            self.data_path / 'jaguar_additional_information_2.csv'
+            self.data_path / 'jaguar_additional_information.csv'
         )
 
     def test_load_data(self):

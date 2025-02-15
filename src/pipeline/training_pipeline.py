@@ -11,7 +11,6 @@ class ModelTrainingPipeline:
         
     def train(self, data, target_col, test_size=0.2):
         """Train the model."""
-        """Train the model."""
         if target_col not in data.columns:
             raise ValueError(f"Target column '{target_col}' not found in data")
             

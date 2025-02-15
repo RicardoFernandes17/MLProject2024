@@ -14,8 +14,8 @@ from jaguar_feature_scaling import get_speed_feature_plot,get_distance_distribut
 pd.set_option('display.max_rows', 1000)
 pd.set_option('display.max_columns', 1000); 
 
-jaguar_data_original, jaguar_data = get_dataset_with_copy('datasets/jaguar_movement_data.csv')
-jaguar_info_original, jaguar_info = get_dataset_with_copy('datasets/jaguar_additional_information_2.csv')
+jaguar_data_original, jaguar_data = get_dataset_with_copy('data/raw/jaguar_movement_data.csv')
+jaguar_info_original, jaguar_info = get_dataset_with_copy('data/raw/jaguar_additional_information.csv')
 
 jaguar_data_nulls = get_columns_with_nulls(jaguar_data_original)
 jaguar_info_nulls = get_columns_with_nulls(jaguar_info_original)

@@ -8,8 +8,8 @@ import numpy as np
 def main():
     # Initialize data loader
     data_loader = DataLoader(
-        'datasets/jaguar_movement_data.csv',
-        'datasets/jaguar_additional_information_2.csv'
+        'data/raw/jaguar_movement_data.csv',
+        'data/raw/jaguar_additional_information.csv'
     )
     
     # Load and preprocess data
