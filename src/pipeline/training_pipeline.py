@@ -10,7 +10,9 @@ class ModelTrainingPipeline:
         self.feature_cols = feature_cols
         
     def train(self, data, target_col, test_size=0.2):
-        """Train the model."""
+        """
+        Train the model.
+        """
         if target_col not in data.columns:
             raise ValueError(f"Target column '{target_col}' not found in data")
             
@@ -52,12 +54,16 @@ class ModelTrainingPipeline:
         }
     
     def save_model(self, filepath):
-        """Save trained model to file."""
+        """
+        Saves the trained classifier to a file using pickle.
+        """
         with open(filepath, 'wb') as f:
             pickle.dump(self.classifier, f)
     
     @staticmethod
     def load_model(filepath):
-        """Load trained model from file."""
+        """
+        Loads a trained classifier from a pickle file.
+        """
         with open(filepath, 'rb') as f:
             return pickle.load(f)

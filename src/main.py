@@ -2,8 +2,6 @@ from data.data_loader import DataLoader
 from data.feature_engineering import FeatureEngineer
 from models.behavior_classifier import JaguarBehaviorClassifier
 from pipeline.training_pipeline import ModelTrainingPipeline
-import pandas as pd
-import numpy as np
 
 def main():
     # Initialize data loader
