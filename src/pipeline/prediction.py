@@ -1,15 +1,24 @@
 import pickle
 import pandas as pd
 import numpy as np
+from sklearn.impute import SimpleImputer
 
 class BehaviorPredictor:
     """Handles predictions using the trained jaguar behavior model."""
     
     def __init__(self, model_path='models/best_model.pkl'):
         """Load the trained model."""
-        with open(model_path, 'rb') as f:
-            self.model = pickle.load(f)
-            
+        try:
+            with open(model_path, 'rb') as f:
+                self.model = pickle.load(f)
+                
+            # Initialize the imputer here
+            self.imputer = SimpleImputer(strategy='mean')
+                
+        except Exception as e:
+            raise Exception(f"Error loading model from {model_path}: {str(e)}")
+        
+        
     def predict_behavior(self, movement_data: pd.DataFrame) -> pd.DataFrame:
         """
         Predict behavior states from movement data.
@@ -44,12 +53,22 @@ class BehaviorPredictor:
         if missing_features:
             raise ValueError(f"Missing required features: {missing_features}")
             
-        # Make predictions
-        predictions = self.model.predict(movement_data[required_features])
-        probabilities = self.model.predict_proba(movement_data[required_features])
-        
-        # Add predictions to data
+        # Create a copy of the data
         result = movement_data.copy()
+        
+        # Get feature data and handle NaN values
+        X = result[required_features]
+        X_imputed = pd.DataFrame(
+            self.imputer.fit_transform(X),
+            columns=X.columns,
+            index=X.index
+        )
+        
+        # Make predictions
+        predictions = self.model.predict(X_imputed)
+        probabilities = self.model.predict_proba(X_imputed)
+        
+        # Add predictions to result
         result['predicted_state'] = predictions
         
         # Add probability for each state

@@ -24,6 +24,8 @@ class FeatureEngineer:
         These features are useful for studying variations in jaguar activity at different times.
         """
         
+        df = df.copy()
+        
         # Extract basic time components
         df['hour'] = df['timestamp'].dt.hour
         df['day'] = df['timestamp'].dt.day
@@ -32,11 +34,13 @@ class FeatureEngineer:
         df['dayofweek'] = df['timestamp'].dt.dayofweek
         
         # Categorize time of day into four periods
+        time_periods = ['Night', 'Morning', 'Afternoon', 'Evening']
         df['time_of_day'] = pd.cut(
             df['hour'],
             bins=[0, 6, 12, 18, 24],
-            labels=['Night', 'Morning', 'Afternoon', 'Evening']
-        )
+            labels=time_periods,
+            include_lowest=True
+        ).astype(str)  
         
         return df
 
@@ -55,59 +59,64 @@ class FeatureEngineer:
         """
         # Create a copy to avoid modifying original
         df = df.copy()
-        
-        # Compute time difference between consecutive records per jaguar
+    
+        # Time differences
         df['time_diff'] = df.groupby('individual_id')['timestamp'].diff()
         df['time_diff_hours'] = df['time_diff'].dt.total_seconds() / 3600
-
-        # Initialize a list to store calculated distances
+        
+        # Calculate distances between consecutive points
         distances = []
-        
-        # Compute distances between consecutive points for each jaguar
-        for _, group in df.groupby('individual_id'):
-            group_distances = [0]  # First point has no distance
-            
-            # Calculate distances between consecutive points
-            for i in range(1, len(group)):
-                prev_point = group.iloc[i-1]
-                curr_point = group.iloc[i]
-                
-                # Calculate geodesic distance (in km) between consecutive GPS points
-                distance = geodesic(
-                    (prev_point['latitude'], prev_point['longitude']),
-                    (curr_point['latitude'], curr_point['longitude'])
-                ).kilometers
-                
-                group_distances.append(distance)
-            
-            distances.extend(group_distances)
-        
-        df['distance'] = distances
-        
-        # Compute speed (distance divided by time difference, avoiding division by zero)
-        df['speed'] = df['distance'] / df['time_diff_hours'].replace({0: np.nan})
-        
-        # Compute movement direction (bearing between points)
         directions = []
         for _, group in df.groupby('individual_id'):
+            group_distances = [0]  # First point has no distance
             group_directions = [np.nan]  # First point has no direction
             
+            # Calculate for remaining points
             for i in range(1, len(group)):
                 prev_point = group.iloc[i-1]
                 curr_point = group.iloc[i]
                 
-                # Compute bearing using arctan2
-                direction = np.degrees(
-                    np.arctan2(
-                        curr_point['longitude'] - prev_point['longitude'],
-                        curr_point['latitude'] - prev_point['latitude']
+                try:
+                    # Calculate distance
+                    distance = geodesic(
+                        (prev_point['latitude'], prev_point['longitude']),
+                        (curr_point['latitude'], curr_point['longitude'])
+                    ).kilometers
+                    group_distances.append(distance)
+                    
+                    # Calculate direction
+                    direction = np.degrees(
+                        np.arctan2(
+                            curr_point['longitude'] - prev_point['longitude'],
+                            curr_point['latitude'] - prev_point['latitude']
+                        )
                     )
-                )
-                group_directions.append(direction)
+                    group_directions.append(direction)
+                except Exception as e:
+                    # If calculation fails, append NaN
+                    group_distances.append(np.nan)
+                    group_directions.append(np.nan)
             
+            distances.extend(group_distances)
             directions.extend(group_directions)
         
+        df['distance'] = distances
         df['direction'] = directions
+        
+        # Calculate speed, handling NaN values
+        df['speed'] = df['distance'] / df['time_diff_hours']
+        
+        # Handle numeric columns separately from categorical
+        numeric_columns = df.select_dtypes(include=[np.number]).columns
+        
+        # Forward fill numeric values within each individual's data
+        for col in numeric_columns:
+            df[col] = df.groupby('individual_id')[col].ffill().fillna(0)
+        
+        # For categorical columns, forward fill only (no numeric filling)
+        categorical_columns = df.select_dtypes(include=['category']).columns
+        for col in categorical_columns:
+            df[col] = df.groupby('individual_id')[col].ffill()
         
         return df
 

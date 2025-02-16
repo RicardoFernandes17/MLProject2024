@@ -20,6 +20,7 @@ def predict_new_data(data_path: str) -> pd.DataFrame:
     # Add required features
     data['timestamp'] = pd.to_datetime(data['timestamp'])
     data = FeatureEngineer.add_time_features(data)
+    
     data = FeatureEngineer.calculate_movement_features(data)
     
     # Create movement windows
@@ -27,6 +28,7 @@ def predict_new_data(data_path: str) -> pd.DataFrame:
     
     # Load model and make predictions
     predictor = BehaviorPredictor()
+    
     predictions = predictor.predict_behavior(window_data)
     
     return predictions
@@ -36,7 +38,7 @@ def main():
     print("Loading new data and making predictions...")
     
     # Replace with path to your new data
-    new_data_path = "data/new_jaguar_movement.csv"
+    new_data_path = "data/predict/new_jaguar_movement.csv"
     
     try:
         predictions = predict_new_data(new_data_path)
