@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 class DataLoader:
     """Data loader for jaguar movement analysis."""

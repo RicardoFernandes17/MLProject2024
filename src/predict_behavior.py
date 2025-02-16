@@ -55,7 +55,7 @@ def main():
         print(predictions[preview_cols].head())
         
         # Save predictions
-        output_path = "results/predictions.csv"
+        output_path = "data/results/predictions.csv"
         predictions.to_csv(output_path, index=False)
         print(f"\nFull predictions saved to: {output_path}")
         

@@ -6,7 +6,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 import pandas as pd
-import numpy as np
 import os
 
 class MLPipeline:

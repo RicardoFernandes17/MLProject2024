@@ -1,7 +1,6 @@
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
-import numpy as np
 
 class JaguarBehaviorClassifier(BaseEstimator, ClassifierMixin):
     """Classifier for jaguar movement behavior."""
