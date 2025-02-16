@@ -5,19 +5,21 @@ from sklearn.model_selection import train_test_split
 import pickle
 
 def main():
-    # Initialize data loader
+    # Initializing the DataLoader class with the movement data and jaguar info dataset path's.
     data_loader = DataLoader(
         'data/raw/jaguar_movement_data.csv',
         'data/raw/jaguar_additional_information.csv'
     )
-    
-    # Load and preprocess data
+
+    # Loads and preprocess data
     print("Loading data...")
     data = data_loader.load_data()
     
-    # Add features
+    # Add features (Time)
     print("Adding time features...")
     data = FeatureEngineer.add_time_features(data)
+    
+    # Add features (Movement)
     print("Calculating movement features...")
     data = FeatureEngineer.calculate_movement_features(data)
     

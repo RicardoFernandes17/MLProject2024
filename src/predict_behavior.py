@@ -4,12 +4,11 @@ from data.feature_engineering import FeatureEngineer
 from pipeline.prediction import BehaviorPredictor
 import pandas as pd
 
-def predict_new_data(data_path: str) -> pd.DataFrame:
+def predict_new_data(data_path):
     """
     Process new data and predict jaguar behaviors.
     
-    Args:
-        data_path: Path to CSV file with new movement data
+    data_path: Path to CSV file with new movement data
         
     Returns:
         DataFrame with original data plus behavior predictions
@@ -34,33 +33,20 @@ def predict_new_data(data_path: str) -> pd.DataFrame:
     return predictions
 
 def main():
-    # Example usage
-    print("Loading new data and making predictions...")
+    predictions = predict_new_data("data/predict/new_jaguar_movement.csv")
     
-    # Replace with path to your new data
-    new_data_path = "data/predict/new_jaguar_movement.csv"
+    print("\nPrediction Summary:")
+    print("\nBehavior State Distribution:")
+    print(predictions['predicted_state'].value_counts())
     
-    try:
-        predictions = predict_new_data(new_data_path)
-        
-        print("\nPrediction Summary:")
-        print("\nBehavior State Distribution:")
-        print(predictions['predicted_state'].value_counts())
-        
-        print("\nSample Predictions (first 5 rows):")
-        preview_cols = [
-            'timestamp', 'individual_id', 'speed_mean',
-            'predicted_state'
-        ] + [col for col in predictions.columns if col.startswith('probability_')]
-        print(predictions[preview_cols].head())
-        
-        # Save predictions
-        output_path = "data/results/predictions.csv"
-        predictions.to_csv(output_path, index=False)
-        print(f"\nFull predictions saved to: {output_path}")
-        
-    except Exception as e:
-        print(f"Error making predictions: {str(e)}")
+    print("\nSample Predictions (first 5 rows):")
+    preview_cols = ['timestamp', 'individual_id', 'speed_mean','predicted_state'] + [col for col in predictions.columns if col.startswith('probability_')]
+    print(predictions[preview_cols].head())
+    
+    # Save predictions
+    output_path = "data/results/predictions.csv"
+    predictions.to_csv(output_path, index=False)
+    print(f"\nFull predictions saved to: {output_path}")
 
 if __name__ == "__main__":
     main()

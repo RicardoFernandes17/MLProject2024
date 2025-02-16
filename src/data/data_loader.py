@@ -17,7 +17,6 @@ class DataLoader:
         """
         Loads and merges datasets.
         """
-        
         # Loads the jaguar data from CSV file
         movement_data = pd.read_csv(self.movement_data_path)
         
