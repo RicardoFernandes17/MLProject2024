@@ -13,7 +13,7 @@ class MLPipeline:
     Comprehensive ML pipeline with configurable parameters via JSON config.
     Supports multiple models, grid search, and cross-validation.
     """
-    def __init__(self, config_path='ml_pipeline_config.json'):
+    def __init__(self, config_path='data/configs/ml_pipeline_config.json'):
         """
         Initialize MLPipeline with configuration from a JSON file.
         
@@ -161,52 +161,3 @@ class MLPipeline:
         
         plt.tight_layout()
         return plt
-
-# Example configuration file creation function
-def create_default_config(output_path='ml_pipeline_config.json'):
-    """
-    Create a default configuration JSON file for the ML Pipeline.
-    
-    :param output_path: Path to save the configuration file
-    """
-    default_config = {
-        "random_state": 42,
-        "max_iter": 1000,
-        "cv": 5,
-        "scoring": "accuracy",
-        "param_grids": {
-            "random_forest": {
-                "classifier__n_estimators": [50, 100, 200],
-                "classifier__max_depth": [None, 10, 20],
-                "classifier__min_samples_split": [2, 5],
-                "classifier__min_samples_leaf": [1, 2]
-            },
-            "svm": {
-                "classifier__C": [0.1, 1, 10],
-                "classifier__kernel": ["rbf", "linear"],
-                "classifier__gamma": ["scale", "auto"]
-            },
-            "logistic": {
-                "classifier__C": [0.1, 1, 10],
-                "classifier__solver": ["lbfgs", "liblinear"],
-                "classifier__class_weight": [None, "balanced"]
-            }
-        }
-    }
-    
-    with open(output_path, 'w') as f:
-        json.dump(default_config, f, indent=4)
-    
-    print(f"Default configuration saved to {output_path}")
-
-# Usage example
-if __name__ == "__main__":
-    # Create a default config file if it doesn't exist
-    if not os.path.exists('ml_pipeline_config.json'):
-        create_default_config()
-    
-    # Initialize pipeline with config
-    pipeline = MLPipeline('ml_pipeline_config.json')
-    
-    # Note: The rest of your data preprocessing and model training 
-    # would go here (X_train, X_test, y_train, y_test)
