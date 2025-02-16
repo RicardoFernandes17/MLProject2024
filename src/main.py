@@ -1,7 +1,9 @@
 from data.data_loader import DataLoader
 from data.feature_engineering import FeatureEngineer
 from models.behavior_classifier import JaguarBehaviorClassifier
-from pipeline.training_pipeline import ModelTrainingPipeline
+from pipeline.ml_pipeline import MLPipeline
+from sklearn.model_selection import train_test_split
+import pickle
 
 def main():
     # Initialize data loader
@@ -41,28 +43,66 @@ def main():
         'path_efficiency', 'direction_variability'
     ]
     
-    # Initialize classifier
-    print("Initializing classifier...")
-    classifier = JaguarBehaviorClassifier()
+    # Initialize the ML pipeline
+    print("Initializing ML pipeline...")
+    ml_pipeline = MLPipeline()
     
-    # Create and run training pipeline
-    print("Training model...")
-    pipeline = ModelTrainingPipeline(classifier, feature_cols)
-    results = pipeline.train(window_data, 'movement_state')
+    # Split the data
+    X_train, X_test, y_train, y_test = train_test_split(
+        window_data[feature_cols],
+        window_data['movement_state'],
+        test_size=0.2,
+        random_state=42,
+        stratify=window_data['movement_state']
+    )
     
-    # Save model
-    print("Saving model...")
-    pipeline.save_model('models/jaguar_behavior_model.pkl')
+    # Train and evaluate models
+    print("Training and evaluating models...")
+    results = ml_pipeline.train_and_evaluate(X_train, X_test, y_train, y_test)
     
-    print("\nTraining Results:")
-    print(f"Train Score: {results['train_score']:.4f}")
-    print(f"Test Score: {results['test_score']:.4f}")
-    print("\nClassification Report:")
-    print(results['classification_report'])
+    # Print results
+    print("\nModel Results:")
+    for name, result in results.items():
+        print(f"\n{name.upper()}:")
+        print(f"Best parameters: {result['best_params']}")
+        print(f"Best CV score: {result['best_score']:.4f}")
+        print(f"Test score: {result['test_score']:.4f}")
+        print(f"CV scores mean ± std: {result['cv_scores'].mean():.4f} ± {result['cv_scores'].std():.4f}")
     
-    # Additional analysis
-    print("\nMovement State Distribution:")
-    print(window_data['movement_state'].value_counts(normalize=True))
+    # Plot results
+    print("\nGenerating plots...")
+    ml_pipeline.feature_names = feature_cols
+    plt = ml_pipeline.plot_results(results)
+    plt.savefig('models/model_comparison.png')
+    
+    # Save best model
+    print("\nSaving best model...")
+    with open('models/best_model.pkl', 'wb') as f:
+        pickle.dump(ml_pipeline.best_model, f)
+        
+    
+    # # Initialize classifier
+    # print("Initializing classifier...")
+    # classifier = JaguarBehaviorClassifier()
+    
+    # # Create and run training pipeline
+    # print("Training model...")
+    # pipeline = ModelTrainingPipeline(classifier, feature_cols)
+    # results = pipeline.train(window_data, 'movement_state')
+    
+    # # Save model
+    # print("Saving model...")
+    # pipeline.save_model('models/jaguar_behavior_model.pkl')
+    
+    # print("\nTraining Results:")
+    # print(f"Train Score: {results['train_score']:.4f}")
+    # print(f"Test Score: {results['test_score']:.4f}")
+    # print("\nClassification Report:")
+    # print(results['classification_report'])
+    
+    # # Additional analysis
+    # print("\nMovement State Distribution:")
+    # print(window_data['movement_state'].value_counts(normalize=True))
 
 if __name__ == "__main__":
     main()
