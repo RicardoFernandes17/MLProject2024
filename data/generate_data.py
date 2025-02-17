@@ -1,4 +1,3 @@
-# src/create_test_data.py
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
@@ -83,13 +82,13 @@ def create_test_dataset():
     
     return df
 
-def generate_random_data(n_samples=100):
+def generate_random_data(n_samples=20):
     """Generate random test data for jaguar location prediction."""
     
     data = {
         'sex': np.random.choice(['M', 'F'], n_samples),
-        'age': np.random.randint(2, 12, n_samples),
-        'weight': np.random.uniform(70, 120, n_samples),
+        'age': np.random.randint(0, 12, n_samples),
+        'weight': np.random.uniform(40, 130, n_samples),
         'month': np.random.randint(1, 13, n_samples)
     }
     
