@@ -6,7 +6,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 import pandas as pd
-import os
 
 class MLPipeline:
     """
@@ -29,7 +28,6 @@ class MLPipeline:
                 ('scaler', StandardScaler()),
                 ('classifier', RandomForestClassifier(random_state=config.get('random_state', 42)))
             ]),
-            
             'svm': Pipeline([
                 ('scaler', StandardScaler()),
                 ('classifier', SVC(
@@ -37,7 +35,6 @@ class MLPipeline:
                     random_state=config.get('random_state', 42)
                 ))
             ]),
-            
             'logistic': Pipeline([
                 ('scaler', StandardScaler()),
                 ('classifier', LogisticRegression(

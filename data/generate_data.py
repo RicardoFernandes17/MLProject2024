@@ -83,5 +83,31 @@ def create_test_dataset():
     
     return df
 
+def generate_random_data(n_samples=100):
+    """Generate random test data for jaguar location prediction."""
+    
+    data = {
+        'sex': np.random.choice(['M', 'F'], n_samples),
+        'age': np.random.randint(2, 12, n_samples),
+        'weight': np.random.uniform(70, 120, n_samples),
+        'month': np.random.randint(1, 13, n_samples)
+    }
+    
+    # Create DataFrame
+    df = pd.DataFrame(data)
+    
+    # Save to CSV
+    output_path = 'data/predict/new_jaguar_data.csv'
+    df.to_csv(output_path, index=False)
+    
+    print("Generated random test data:")
+    print(f"Total samples: {n_samples}")
+    print("\nSample of generated data:")
+    print(df.head())
+    print(f"\nData saved to: {output_path}")
+    
+    return df
+
 if __name__ == "__main__":
     create_test_dataset()
+    generate_random_data()

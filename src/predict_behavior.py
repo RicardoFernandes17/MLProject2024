@@ -1,7 +1,9 @@
-# src/predict_behavior.py
-from data.data_loader import DataLoader
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from data.feature_engineering import FeatureEngineer
-from pipeline.prediction import BehaviorPredictor
+from predictor.prediction import BehaviorPredictor
 import pandas as pd
 
 def predict_new_data(data_path):
@@ -35,16 +37,8 @@ def predict_new_data(data_path):
 def main():
     predictions = predict_new_data("data/predict/new_jaguar_movement.csv")
     
-    print("\nPrediction Summary:")
-    print("\nBehavior State Distribution:")
-    print(predictions['predicted_state'].value_counts())
-    
-    print("\nSample Predictions (first 5 rows):")
-    preview_cols = ['timestamp', 'individual_id', 'speed_mean','predicted_state'] + [col for col in predictions.columns if col.startswith('probability_')]
-    print(predictions[preview_cols].head())
-    
     # Save predictions
-    output_path = "data/results/predictions.csv"
+    output_path = "data/results/movement_predictions.csv"
     predictions.to_csv(output_path, index=False)
     print(f"\nFull predictions saved to: {output_path}")
 

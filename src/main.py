@@ -1,8 +1,14 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from data.data_loader import DataLoader
 from data.feature_engineering import FeatureEngineer
 from pipeline.ml_pipeline import MLPipeline
+from pipeline.longitude_predictor import JaguarLocationPredictor
 from sklearn.model_selection import train_test_split
 import pickle
+
 
 def main():
     # Initializing the DataLoader class with the movement data and jaguar info dataset path's.
@@ -18,6 +24,19 @@ def main():
     # Add features (Time)
     print("Adding time features...")
     data = FeatureEngineer.add_time_features(data)
+    
+    ####
+    ## Latitude Longitude predictor training
+    model = JaguarLocationPredictor()
+    model.train(data)
+    
+    # Saves the trained model
+    print("\nSaving model...")
+    with open('models/location_predictor.pkl', 'wb') as f:
+        pickle.dump(model, f)
+    
+    print(f"\nModel saved to models/location_predictor.pkl")
+    #####
     
     # Add features (Movement)
     print("Calculating movement features...")
