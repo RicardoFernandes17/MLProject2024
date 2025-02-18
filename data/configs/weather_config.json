@@ -1,0 +1,15 @@
+{
+  "cache_dir": "data/weather_cache",
+  "rate_limit": {
+    "calls_per_minute": 60,
+    "delay_between_calls": 0.1
+  },
+  "weather_features": [
+    "temperature",
+    "humidity",
+    "wind_speed",
+    "wind_direction",
+    "precipitation",
+    "cloud_cover"
+  ]
+}
