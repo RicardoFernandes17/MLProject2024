@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+import os
 
 def create_realistic_movement_pattern(n_points, pattern_type='resting'):
     """
@@ -40,6 +41,9 @@ def create_realistic_movement_pattern(n_points, pattern_type='resting'):
 
 def create_test_dataset():
     """Create test dataset with different movement patterns."""
+    
+    # Ensure data/predict directory exists
+    os.makedirs('data/predict', exist_ok=True)
     
     # Time settings
     start_time = datetime(2025, 1, 1)
@@ -85,6 +89,9 @@ def create_test_dataset():
 def generate_random_data(n_samples=20):
     """Generate random test data for jaguar location prediction."""
     
+    # Ensure data/predict directory exists
+    os.makedirs('data/predict', exist_ok=True)
+    
     data = {
         'sex': np.random.choice(['M', 'F'], n_samples),
         'age': np.random.randint(0, 12, n_samples),
@@ -107,6 +114,47 @@ def generate_random_data(n_samples=20):
     
     return df
 
+def generate_weather_data(num_samples=50):
+    """Generate random weather data for testing."""
+    
+    # Ensure data/predict directory exists
+    os.makedirs('data/predict', exist_ok=True)
+    
+    # Create a DataFrame
+    data = {
+        'date': [datetime.now().date() - timedelta(days=x) for x in range(num_samples)],
+        'village_latitude': np.round(np.random.uniform(-25, -15, num_samples), 6),
+        'village_longitude': np.round(np.random.uniform(-55, -45, num_samples), 6),
+        'temperature': np.round(np.random.uniform(15, 35, num_samples), 1),
+        'humidity': np.round(np.random.uniform(40, 90, num_samples)).astype(int),
+        'wind_speed': np.round(np.random.uniform(0, 20, num_samples), 1),
+        'wind_direction': np.round(np.random.uniform(0, 360, num_samples)).astype(int),
+        'precipitation': np.round(np.random.uniform(0, 50, num_samples), 1),
+        'cloud_cover': np.round(np.random.uniform(0, 100, num_samples)).astype(int)
+    }
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
+    
+    # Ensure realistic ranges
+    df.loc[df['wind_direction'] > 360, 'wind_direction'] = 360
+    df.loc[df['wind_direction'] < 0, 'wind_direction'] = 0
+    df.loc[df['cloud_cover'] > 100, 'cloud_cover'] = 100
+    df.loc[df['cloud_cover'] < 0, 'cloud_cover'] = 0
+    
+    # Save to CSV
+    output_path = 'data/predict/new_weather_data.csv'
+    df.to_csv(output_path, index=False)
+    
+    print("Generated weather test data:")
+    print(f"Total samples: {num_samples}")
+    print("\nSample of generated data:")
+    print(df.head())
+    print(f"\nData saved to: {output_path}")
+    
+    return df
+
 if __name__ == "__main__":
     create_test_dataset()
     generate_random_data()
+    generate_weather_data()

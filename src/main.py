@@ -6,17 +6,24 @@ from data.data_loader import DataLoader
 from data.feature_engineering import FeatureEngineer
 from pipeline.ml_pipeline import MLPipeline
 from pipeline.longitude_predictor import JaguarLocationPredictor
+from src.weather.weather_service import WeatherService
 from sklearn.model_selection import train_test_split
 import pickle
-
+import json
+from pathlib import Path
 
 def main():
+    with open('data/configs/weather_config.json', 'r') as f:
+        weather_config = json.load(f)
+        
     # Initializing the DataLoader class with the movement data and jaguar info dataset path's.
     data_loader = DataLoader(
         'data/raw/jaguar_movement_data.csv',
-        'data/raw/jaguar_additional_information.csv'
+        'data/raw/jaguar_additional_information.csv',
+        cache_dir='data/processed/cache'  # No trailing comma
     )
-
+    # weather_service = WeatherService(cache_dir='data/weather_cache')
+    
     # Loads and preprocess data
     print("Loading data...")
     data = data_loader.load_data()
@@ -42,6 +49,9 @@ def main():
     print("Calculating movement features...")
     data = FeatureEngineer.calculate_movement_features(data)
     
+    # Add weather data
+    #data = weather_service.enrich_jaguar_data(data)
+    
     # Create movement windows
     print("Creating movement windows...")
     window_data = FeatureEngineer.create_movement_windows(data)
@@ -49,6 +59,13 @@ def main():
     # Classify movement states
     print("Classifying movement states...")
     window_data = FeatureEngineer.classify_movement_state(window_data)
+   # weather_analysis = weather_service.analyze_weather_impact(window_data)
+    
+    # Save weather analysis
+    #analysis_path = Path('data/results/weather_analysis.json')
+    #analysis_path.parent.mkdir(parents=True, exist_ok=True)
+    #with open(analysis_path, 'w') as f:
+        #json.dump(weather_analysis, f, indent=4)
     
     # Remove rows with unknown states or NaN values
     window_data = window_data.dropna()
