@@ -218,7 +218,7 @@ class FeatureEngineer:
         df = df.copy()
         
         # Define speed thresholds (km/h)
-        speed_thresholds = { 'low': 2, 'medium': 5, 'high': 8 }
+        speed_thresholds = { 'low': 1, 'medium': 5, 'high': 8 }
         
         # Define direction variability thresholds (degrees)
         direction_var_thresholds = { 'low': 30, 'medium': 60, 'high': 90 }
