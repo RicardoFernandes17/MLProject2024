@@ -1,16 +1,8 @@
 import pickle
 import pandas as pd
 import numpy as np
-
-import pickle
-import pandas as pd
 from sklearn.impute import SimpleImputer
-
-import pickle
-import pandas as pd
-import numpy as np
 from sklearn.preprocessing import StandardScaler
-from sklearn.impute import SimpleImputer
 
 class PositionPredictor:
     """Handles predictions using the trained jaguar location model."""
