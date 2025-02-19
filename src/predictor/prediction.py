@@ -2,7 +2,6 @@ import pickle
 import pandas as pd
 from sklearn.impute import SimpleImputer
 
-    
 class BehaviorPredictor:
     """Handles predictions using the trained jaguar behavior model."""
     
