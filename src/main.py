@@ -4,10 +4,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from data.data_loader import DataLoader
 from data.feature_engineering import FeatureEngineer
-from models.ml_pipeline import MLPipeline
-from models.longitude_predictor import JaguarLocationPredictor
+from models import MLPipeline, JaguarLocationPredictor, WeatherMovementModel
 from src.weather.weather_service import WeatherService
-from models.weather_movement_model import WeatherMovementModel
 from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
