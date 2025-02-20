@@ -3,7 +3,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from data.feature_engineering import FeatureEngineer
-from predictor.prediction import BehaviorPredictor
+from predictor import BehaviorPredictor
 import pandas as pd
 
 def predict_new_data(data_path):

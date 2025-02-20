@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from predictor.position_prediction import PositionPredictor
+from predictor import PositionPredictor
 import pandas as pd
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs

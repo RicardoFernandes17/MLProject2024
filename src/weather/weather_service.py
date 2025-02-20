@@ -4,32 +4,47 @@ from pathlib import Path
 import json
 import time
 from datetime import datetime
-import logging
 
 class WeatherService:
-    """Simplified weather service for village-based locations."""
+    """
+    A service for retrieving and caching weather data for geographical locations.
     
+    The class provides methods to:
+    - Fetch weather data from Open-Meteo Archive API.
+    - Caches weather information to reduce redundant API calls.
+    - Process and annotate location data with weather information.
+    
+    Attributes:
+        cache_dir (Path): Directory for storing cached weather data.
+        base_url (str): Base URL for weather data API.
+    """
     def __init__(self, cache_dir: str = 'data/weather_cache'):
-        """Initialize weather service."""
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.base_url = "https://archive-api.open-meteo.com/v1/archive"
-        
-        # Setup logging
-        logging.basicConfig(level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
     
-    def get_weather_for_village(self, date: str, lat: float, lon: float) -> dict:
-        """Get weather data for a village location."""
+    def get_weather_for_village(self, date: str, lat: float, lon: float):
+        """
+        Retrieve weather data for a specific location and date.
+        
+        Uses a caching mechanism to store and retrieve previously fetched data.
+        Fetches hourly weather data including temperature, humidity, wind, etc.
+        
+        Args:
+            date (str): Date for weather data in 'YYYY-MM-DD' format
+            lat (float): Latitude of the location
+            lon (float): Longitude of the location
+        
+        Returns:
+            dict: Weather data for the specified location and date
+        """
         cache_key = f"{lat:.2f}_{lon:.2f}_{date}"
         cache_file = self.cache_dir / f"{cache_key}.json"
         
-        # Check cache first
         if cache_file.exists():
             with open(cache_file, 'r') as f:
                 return json.load(f)
         
-        # Prepare API request
         params = {
             'latitude': lat,
             'longitude': lon,
@@ -49,35 +64,41 @@ class WeatherService:
             
             data = response.json()
             
-            # Cache the response
             with open(cache_file, 'w') as f:
                 json.dump(data, f)
             
-            time.sleep(0.1)  # Small delay between requests
+            time.sleep(0.1) 
             return data
             
         except Exception as e:
-            self.logger.error(f"Error fetching weather for {lat}, {lon}: {e}")
+            print(f"Error fetching weather for {lat}, {lon}: {e}")
             return None
     
-    def add_weather_data(self, unique_locations: pd.DataFrame) -> pd.DataFrame:
-        """Add weather data to unique village locations."""
-        self.logger.info("Adding weather data to villages...")
+    def add_weather_data(self, unique_locations: pd.DataFrame):
+        """
+        Enrich a DataFrame of locations with corresponding weather information.
         
-        # Create copy of input data
+        Iterates through unique locations, fetches weather data, and adds 
+        weather-related columns to the input DataFrame.
+        
+        Args:
+            unique_locations (pd.DataFrame): DataFrame with location information
+        
+        Returns:
+            pd.DataFrame: Original DataFrame with added weather columns
+        """
+        print("Adding weather data to villages...")
         data_with_weather = unique_locations.copy()
         
-        # Initialize weather columns
         weather_columns = ['temperature', 'humidity', 'wind_speed',
                          'wind_direction', 'precipitation', 'cloud_cover']
         for col in weather_columns:
             data_with_weather[col] = None
         
-        # Process each unique date-location combination
         total_rows = len(data_with_weather)
         for idx, row in data_with_weather.iterrows():
             if idx % 10 == 0:
-                self.logger.info(f"Processing {idx}/{total_rows} locations...")
+                print(f"Processing {idx}/{total_rows} locations...")
                 
             date_str = row['date'].strftime('%Y-%m-%d') if isinstance(row['date'], datetime) else str(row['date'])
             
@@ -89,7 +110,6 @@ class WeatherService:
             
             if weather_data and 'hourly' in weather_data:
                 hourly = weather_data['hourly']
-                # Use noon (12:00) data as representative for the day
                 hour_idx = 12
                 
                 data_with_weather.loc[idx, 'temperature'] = hourly['temperature_2m'][hour_idx]
@@ -98,6 +118,5 @@ class WeatherService:
                 data_with_weather.loc[idx, 'wind_direction'] = hourly['winddirection_10m'][hour_idx]
                 data_with_weather.loc[idx, 'precipitation'] = hourly['precipitation'][hour_idx]
                 data_with_weather.loc[idx, 'cloud_cover'] = hourly['cloudcover'][hour_idx]
-        
-        self.logger.info("Weather data addition completed.")
+        print("Weather data addition completed.")
         return data_with_weather

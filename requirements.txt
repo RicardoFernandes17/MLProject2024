@@ -1,0 +1,44 @@
+# Python Version:3.11.1
+
+# Package Requirements
+System & File Operations:
+- sys - System-specific parameters and functions
+- os - Operating system interface
+- pathlib (Path) - Object-oriented filesystem paths
+- json - JSON data handling
+
+Core:
+- pandas
+- numpy
+
+Date & Time Handling
+- datetime (datetime, timedelta) - Basic date and time types
+- time - Time access and conversions
+
+Machine Learning and Statistics
+- sklearn
+    - sklearn.cluster (DBSCAN)
+    - sklearn.preprocessing (StandardScaler)
+    - sklearn.model_selection (train_test_split, GridSearchCV, cross_val_score)
+    - sklearn.pipeline (Pipeline)
+    - sklearn.ensemble (RandomForestClassifier, RandomForestRegressor)
+    - sklearn.svm (SVC)
+    - sklearn.linear_model (LogisticRegression)
+    - sklearn.impute (SimpleImputer)
+
+Visualization
+- matplotlib.pyplot - Basic plotting functionality
+- seaborn - Statistical data visualization
+- cartopy packages:
+    - cartopy.crs - Cartographic projections
+    - cartopy.feature - Map features
+
+Geographic & Spatial Analysis
+- geopy.distance - Geographic distance calculations
+- cartopy - Geographic plotting library
+
+HTTP & Web
+- requests - HTTP library for making API calls
+
+Serialization
+- pickle - Python object serialization
